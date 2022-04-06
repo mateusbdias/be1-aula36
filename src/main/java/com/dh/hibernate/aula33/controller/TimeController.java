@@ -14,12 +14,8 @@ import java.util.Optional;
 @RequestMapping("/times")
 public class TimeController {
 
-    private final TimeService timeService;
-
     @Autowired
-    public TimeController(TimeService timeService) {
-        this.timeService = timeService;
-    }
+    private TimeService timeService;
 
     @GetMapping
     public ResponseEntity<List<Time>> buscarTodos() {
@@ -27,8 +23,8 @@ public class TimeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Time>> buscar(@PathVariable Integer id) {
-        return ResponseEntity.ok(timeService.buscar(id));
+    public ResponseEntity<Optional<Time>> buscarPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(timeService.buscarPorId(id));
     }
 
     @PostMapping
@@ -39,14 +35,27 @@ public class TimeController {
 
     @PutMapping
     public ResponseEntity<?> atualizarTime(@RequestBody Time time) {
-        timeService.atualizar(time);
-        return new ResponseEntity<>(HttpStatus.OK);
+        ResponseEntity<Time> response = null;
+
+        if (time.getId() != null && timeService.buscarPorId(time.getId()).isPresent()) {
+            response = ResponseEntity.ok(timeService.atualizar(time));
+        } else {
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return response;
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletarTime(@PathVariable Integer id) {
-        timeService.deletar(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> excluirTime(@PathVariable Integer id) {
+        ResponseEntity<String> response = null;
+        if (timeService.buscarPorId(id).isPresent()) {
+            timeService.excluir(id);
+            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body(
+                    "Time excluído com sucesso!");
+        } else {
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return response;
     }
 
 }

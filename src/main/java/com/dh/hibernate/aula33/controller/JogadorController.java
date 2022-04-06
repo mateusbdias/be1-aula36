@@ -14,12 +14,8 @@ import java.util.Optional;
 @RequestMapping("/jogadores")
 public class JogadorController {
 
-    private final JogadorService jogadorService;
-
     @Autowired
-    public JogadorController(JogadorService jogadorService) {
-        this.jogadorService = jogadorService;
-    }
+    private JogadorService jogadorService;
 
     @GetMapping
     public ResponseEntity<List<Jogador>> buscarTodos() {
@@ -27,8 +23,8 @@ public class JogadorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Jogador>> buscar(Integer id) {
-        return ResponseEntity.ok(jogadorService.buscar(id));
+    public ResponseEntity<Optional<Jogador>> buscarPorId(Integer id) {
+        return ResponseEntity.ok(jogadorService.buscarPorId(id));
     }
 
     @PostMapping
@@ -37,14 +33,15 @@ public class JogadorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    /*@PutMapping
+    @PutMapping
     public ResponseEntity<?> atualizarJogador(@RequestBody Jogador jogador) {
-
-    }*/
+        jogadorService.atualizar(jogador);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletarJogador(@PathVariable Integer id) {
-        jogadorService.deletar(id);
+    public ResponseEntity<?> excluirJogador(@PathVariable Integer id) {
+        jogadorService.excluir(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
