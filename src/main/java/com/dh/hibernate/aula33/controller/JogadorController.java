@@ -2,6 +2,7 @@ package com.dh.hibernate.aula33.controller;
 
 import com.dh.hibernate.aula33.model.Jogador;
 import com.dh.hibernate.aula33.service.JogadorService;
+import com.dh.hibernate.aula33.service.TimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,14 @@ import java.util.Optional;
 @RequestMapping("/jogadores")
 public class JogadorController {
 
-    @Autowired
     private JogadorService jogadorService;
+    private TimeService timeService;
+
+    @Autowired
+    public JogadorController(JogadorService jogadorService, TimeService timeService) {
+        this.jogadorService = jogadorService;
+        this.timeService = timeService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Jogador>> buscarTodos() {
@@ -23,14 +30,14 @@ public class JogadorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Jogador>> buscarPorId(Integer id) {
+    public ResponseEntity<Optional<Jogador>> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(jogadorService.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<?> salvarJogador(@RequestBody Jogador jogador) {
-        jogadorService.salvar(jogador);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Jogador> salvarJogador(@RequestBody Jogador jogador) {
+        timeService.salvar(jogador.getTime());
+        return ResponseEntity.ok(jogadorService.salvar(jogador));
     }
 
     @PutMapping

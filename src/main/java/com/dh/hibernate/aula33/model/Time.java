@@ -1,5 +1,7 @@
 package com.dh.hibernate.aula33.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +16,8 @@ public class Time {
     private String nome;
     private String cidade;
     private String estado;
-    @OneToMany(mappedBy = "time", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "time", fetch = FetchType.EAGER)
     private Set<Jogador> jogadores = new HashSet<>();
 
     public Time() {
